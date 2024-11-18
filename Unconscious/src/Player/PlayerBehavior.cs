@@ -81,7 +81,7 @@ namespace Unconscious.src.Player
                 EntityPlayer entityPlayer = entity as EntityPlayer;
                 DefaultInterpolatedStringHandler defaultInterpolatedStringHandler = new DefaultInterpolatedStringHandler(19, 1);
                 
-                defaultInterpolatedStringHandler.AppendLiteral($"{Lang.Get("unconscious:pickingup-progress")}");
+                defaultInterpolatedStringHandler.AppendLiteral(Lang.Get("unconscious:pickingup-progress"));
                 defaultInterpolatedStringHandler.AppendFormatted(Math.Truncate(holdTime * 10f));
                 defaultInterpolatedStringHandler.AppendLiteral("%");
 

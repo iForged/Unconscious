@@ -2,7 +2,6 @@
 using Unconscious.src.Packets;
 using Vintagestory.API.Client;
 using Vintagestory.API.Config;
-using Vintagestory.API.Server;
 
 namespace Unconscious.src.Gui
 {
@@ -11,10 +10,13 @@ namespace Unconscious.src.Gui
         private readonly ShowPlayerFinishOffScreenPacket packet;
         private bool isButtonEnabled = false;
         private long callbackId;
+        private long countdownId;
+        private int killcountdown;
         private GuiComposer composer;
         public FinishOffOverlay(ICoreClientAPI capi, ShowPlayerFinishOffScreenPacket packet) : base(capi)
         {
             this.packet = packet;
+            this.killcountdown = packet.finishTimer;
             Compose();
         }
 
@@ -59,7 +61,7 @@ namespace Unconscious.src.Gui
                 "quoteText"
             )
               .AddButton(Lang.Get("unconscious:finishing-button-spare"), SpareHim, buttonSpareBound)
-              .AddButton(Lang.Get("unconscious:finishing-button-kill"), KillHim, buttonKillBound, EnumButtonStyle.Normal, "killButton")
+              .AddButton(packet.finishTimer.ToString(), KillHim, buttonKillBound, EnumButtonStyle.Normal, "killButton")
               .Compose();
         }
 
@@ -100,16 +102,19 @@ namespace Unconscious.src.Gui
                 isButtonEnabled = false;
                 composer.GetButton("killButton").Enabled = false;
                 composer.ReCompose();
-                // Start a timer to enable the button after 3 seconds
-                callbackId = capi.World.RegisterCallback((dt) =>
+                countdownId = capi.Event.RegisterGameTickListener((dt) =>
                 {
-                    isButtonEnabled = true;
-                    composer.GetButton("killButton").Enabled = true;
+                    killcountdown--;
+                    composer.GetButton("killButton").Text = killcountdown.ToString();
                     composer.ReCompose();
-
-                    capi.World.UnregisterCallback(callbackId);
-                }, (int)(packet.finishTimer * 1000));
-
+                    if (killcountdown <= 0)
+                    {
+                        composer.GetButton("killButton").Enabled = true;
+                        composer.GetButton("killButton").Text = Lang.Get("unconscious:finishing-button-kill");
+                        composer.ReCompose();
+                        capi.World.UnregisterGameTickListener(countdownId);
+                    }
+                }, 1000);
                 return true;
             }
             return false;

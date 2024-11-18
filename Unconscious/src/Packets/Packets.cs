@@ -32,7 +32,7 @@ namespace Unconscious.src.Packets
         [ProtoMember(4)]
         public EnumDamageType damageType { get; set; }
         [ProtoMember(5)]
-        public float finishTimer { get; set; }
+        public int finishTimer { get; set; }
     }
 
     [ProtoContract]

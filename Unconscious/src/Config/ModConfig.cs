@@ -8,7 +8,7 @@ namespace Unconscious.src.Config
         public int UnconsciousDuration = 300;
         public float RevivePerTickDuration = 0.2f;
 
-        public float FinishingTimer = 3f;
+        public int FinishingTimer = 3;
 
         public float MaxHealthPercentAfterRevive = 0.15f;
 
